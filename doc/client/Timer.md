@@ -9,9 +9,11 @@ Properties
 
 Methods
 -------
-> *`init(duration, startTime)`*
-> Sets timer start time and duration
+### init
+#### Arguments: `duration`, `startTime`
+Sets timer start time and duration
 
 
-> *`isOver(time)`*
-> Returns true if `time` is greater than timer's startTime + duration
+### isOver
+#### Arguments: `time`
+Returns true if `time` is greater than timer's startTime + duration
