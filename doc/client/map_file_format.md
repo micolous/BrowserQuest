@@ -3,38 +3,38 @@ Map File Format
 
 **Map JSON has the following keys:**
 
-##animated
+###animated
 
 An array of tile indeces in `data` of tiles that are animated
 
-##blocking
+###blocking
 
 An array of tile indeces in `data` of tiles that are non-walkable
 
-##checkpoints
+###checkpoints
 
-##collisions
+###collisions
 
 An array of tile indeces in `data` of tiles that produce a collision
 
-##data
+###data
 
 The big one: an array with length `height * width`, a tileID to represent each worldmap tile.  Tile [0,0] is in the upper left corner of the worldmap
 
-##doors
+###doors
 
-##height
+###height
 
 The height of the worldmap in tiles
 
-##high
+###high
 
-##musicAreas
+###musicAreas
 
-##plateau
+###plateau
 
-##tilesize
+###tilesize
 
-##width 
+###width 
 
 The width of the worldmap in tiles
