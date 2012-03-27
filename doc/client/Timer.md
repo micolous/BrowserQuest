@@ -9,10 +9,13 @@ Properties
 
 Methods
 -------
-`init(duration, startTime)`
-> Sets timer start time and duration
+**init(duration, startTime)**
+
+Sets timer start time and duration
 
 
-`isOver(time)`
-> Call this with the current tick value as `time`
-> Returns true if `time` is greater than timer's `lastTime` + `duration`
+*isOver(time)*
+
+Call this with the current tick value as `time`
+
+Returns true if `time` is greater than timer's `lastTime` + `duration`
