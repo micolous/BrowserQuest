@@ -9,11 +9,8 @@ Properties
 
 Methods
 -------
-### init
-#### Arguments: `duration`, `startTime`
+### init(`duration`, `startTime`)
 Sets timer start time and duration
 
-
-### isOver
-#### Arguments: `time`
+### isOver(`time`)
 Returns true if `time` is greater than timer's startTime + duration
