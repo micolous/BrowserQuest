@@ -9,11 +9,11 @@ Properties
 
 Methods
 -------
-**init(`duration`, `startTime`)**
+**`init(duration, startTime)`**
 
 Sets timer start time and duration
 
 
-**isOver(`time`)**
+**`isOver(time)`**
 
 Returns true if `time` is greater than timer's `lastTime` + `duration`
