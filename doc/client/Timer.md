@@ -14,7 +14,7 @@ Methods
 Sets timer start time and duration
 
 
-*isOver(time)*
+**isOver(time)**
 
 Call this with the current tick value as `time`
 
