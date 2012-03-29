@@ -76,3 +76,47 @@ class PopulationMessage(Message):
 			self.world,
 			self.total
 		]
+
+class AttackMessage(Message):
+	message_type = MESSAGES['ATTACK']
+	
+	def __init__(self, attacker_id, target_id):
+		self.attacker_id = attacker_id
+		self.target_id = target_id
+	
+	def serialise(self):
+		return super(AttackMessage, self).serialise() + [
+			self.attacker_id,
+			self.target_id
+		]
+
+class HealthMessage(Message):
+	message_type = MESSAGES['HEALTH']
+	
+	def __init__(self, points, is_regen):
+		self.points = points
+		self.is_regen = is_regen
+	
+	def serialise(self):
+		o = super(AttackMessage, self).serialise() + [self.points]
+		if self.is_regen:
+			o.append(1)
+		
+		return o
+
+class WelcomeMessage(Message):
+	"node.js version implements this in player.js:Player.connection.listen.  Implemented here for consistancy."
+	message_type = MESSAGES['WELCOME']
+	
+	def __init__(self, player):
+		self.player = player
+	
+	def serialise(self):
+		return super(WelcomeMessage, self).serialise() + [
+			self.player.entity_id,
+			self.player.name,
+			self.player.x,
+			self.player.y,
+			self.player.hit_points
+		]
+	
