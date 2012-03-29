@@ -55,4 +55,8 @@ This is currently not complete, only the client loads, there is no server to con
 
 It may be possible to load this inside of `mod_pywebsockets` with a working Apache server.  Otherwise included in the root directory of the project is a `run_server` shell (sh) and Windows command script (cmd).
 
-Running the appropriate one for your platform will start up a development server with the client hosted at port 8000.
+Running the appropriate one for your platform will start up a development server with the client hosted at port 8000.  To use it, visit http://localhost:8000/client/
+
+There's currently a bug in the websockets handler taking over / for non-WebSockets requests.
+
+Don't forget to update /client/config/config_build.json with your server settings, if you're running it on something other than localhost.
