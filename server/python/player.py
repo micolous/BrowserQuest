@@ -20,6 +20,7 @@ class Player(Character):
 	def __init__(self, connection, server):
 		self.connection = connection
 		self.server = server
+		self.world = None
 		
 		# TODO: fix this to use proper ID assignment.
 		connection_id = randint(0, 65535)
@@ -56,7 +57,7 @@ class Player(Character):
 				#self.server.
 				
 				# send welcome message
-				self.send(WelcomeMessage(self).serialise())
+				self.send(WelcomeMessage(self))
 				self.has_entered_game = True
 				self.is_dead = False
 		elif self.has_entered_game:
@@ -92,8 +93,7 @@ class Player(Character):
 		return o
 		
 	def send(self, message):
-		
-		s = json.dumps(message)
+		s = json.dumps(message.serialise())
 		self.connection.send_message(s, binary=False)
 	
 	def equip_armor(self, kind):
@@ -111,5 +111,56 @@ class Player(Character):
 		# TODO: implement requestpos_callback
 		pass
 	
+	def on_move(self, x, y):
+		# moved from worldserver.js
+		logger.debug('%s is moving to (%d, %d)', self.name, x, y)
+		
+		for attacker in self.attackers.values():
+			target = self.world.get_entity_by_id(attacker.target)
+			
+			if target:
+				pos = self.world.find_position_next_to(attacker, target)
+				
+				if attacker.distance_to_spawning_point(*pos) > 50):
+					attacker.clear_target()
+					attacker.forget_everyone()
+					self.remove_attacker(attacker)
+				else:
+					self.world.move_entity(attacker, *pos)
+					
+	on_loot_move = on_move
+	
+	def on_zone(self):
+		has_changed_group = self.world.handle_entity_group_membership(self)
+		
+		if has_changed_group:
+			self.world.push_to_previous_groups(self, DestroyMessage(self))
+			self.world.push_relevant_entities(self)
+			
+	def on_broadcast(self, message, ignore_self):
+		if ignore_self:
+			entity_id = None
+		else:
+			entity_id = self.entity_id
+		
+		self.world.push_to_adjacent_groups(self.group, message, entity_id)
+	
+	def on_broadcast_to_zone(self, message, ignore_self):
+		if ignore_self:
+			entity_id = None
+		else:
+			entity_id = self.entity_id
+		
+		self.world.push_to_group(self.group, message, entity_id)
+	
+	def on_exit(self):
+		logger.info('%s has left the game.', self.name)
+		
+		self.world.remove_player(player)
+		self.world.player_count -= 1
+		
+		if self.world.removed_callback:
+			self.world.removed_callback()
 		
 		
+	

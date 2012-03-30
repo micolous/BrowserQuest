@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import logging, json
+import logging
 logger = logging.getLogger(__name__)
 
 MESSAGES = dict(
@@ -99,8 +99,8 @@ class SpawnMessage(Message):
 class DespawnMessage(Message):
 	message_type = MESSAGES['DESPAWN']
 	
-	def __init__(self, entity_id):
-		self.entity_id = entity_id
+	def __init__(self, entity):
+		self.entity_id = entity.entity_id
 	
 	def serialise(self):
 		return super(DespawnMessage, self).serialise() + [self.entity_id]
@@ -173,8 +173,6 @@ class WelcomeMessage(Message):
 			self.player.hit_points
 		]
 
-		
-		
 @message_handler
 class ChatMessage(Message):
 	message_type = MESSAGES['CHAT']
@@ -196,3 +194,6 @@ class ChatMessage(Message):
 	def deserialise(cls, msg):
 		"For client->server messages, the entity_id sent should be ignored!"
 		return cls(entity_id=msg[1], message=msg[2])
+
+class DestroyMessage(DespawnMessage):
+	message_type = MESSAGES['DESTROY']
