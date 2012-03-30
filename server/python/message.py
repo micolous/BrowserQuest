@@ -173,6 +173,26 @@ class WelcomeMessage(Message):
 			self.player.hit_points
 		]
 
+		
+		
+@message_handler
 class ChatMessage(Message):
-	""
-	pass
+	message_type = MESSAGES['CHAT']
+	
+	def __init__(self, player=None, message="", entity_id=0):
+		if player:
+			self.entity_id = player.entity_id
+		else:
+			self.entity_id = entity_id
+		self.message = message
+	
+	def serialise(self):
+		return super(ChatMessage, self).serialise() + [
+			self.entity_id,
+			self.message
+		]
+
+	@classmethod
+	def deserialise(cls, msg):
+		"For client->server messages, the entity_id sent should be ignored!"
+		return cls(entity_id=msg[1], message=msg[2])

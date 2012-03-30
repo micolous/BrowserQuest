@@ -60,8 +60,13 @@ class Player(Character):
 				self.has_entered_game = True
 				self.is_dead = False
 		elif self.has_entered_game:
-		
-			logger.warn('Ignoring unknown message type %d (%s) during has_entered_game', msg.message_type, msg.message_type_label())
+			if type(msg) is ChatMessage:
+				# ignore the player_id sent by the client
+				
+				# TODO: broadcast this to nearby clients.
+				logger.info('<%s> %s', self.name, msg.message)
+			else:
+				logger.warn('Ignoring unknown message type %d (%s) during has_entered_game', msg.message_type, msg.message_type_label())
 		else:
 			logger.warn('Ignoring message type %d (%s) during !has_entered_game', msg.message_type, msg.message_type_label())
 		

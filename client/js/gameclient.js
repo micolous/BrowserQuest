@@ -505,7 +505,11 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
         },
     
         sendChat: function(text) {
-            this.sendMessage([Types.Messages.CHAT,
+			// Token 1 is ignored for Client -> Server messages.
+			// In the Server -> Client version it sends a player ID.
+			// I've changed this so the message is consistantly handled on client and
+			// server side.
+            this.sendMessage([Types.Messages.CHAT, 0,
                               text]);
         },
     

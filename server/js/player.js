@@ -74,7 +74,11 @@ module.exports = Player = Character.extend({
                 self.zone_callback();
             }
             else if(action === Types.Messages.CHAT) {
-                var msg = Utils.sanitize(message[1]);
+				// Token 1 is empty for Client -> Server messages.
+				// In the Server -> Client version it sends a player ID.
+				// I've changed this so the message is consistantly handled on client and
+				// server side.
+                var msg = Utils.sanitize(message[2]);
                 
                 // Sanitized messages may become empty. No need to broadcast empty chat messages.
                 if(msg && msg !== "") {
