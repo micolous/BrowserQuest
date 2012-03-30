@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from message import MESSAGES, WelcomeMessage
+from message import *
 from character import Character
 from utils import random_orientation
 from properties import get_armor_level, get_weapon_level
@@ -29,26 +29,25 @@ class Player(Character):
 		self.has_entered_game = False
 		
 		
-	def handle_message(self, message):
-		logger.info('Recieved: %r', message)
+	def handle_message(self, message_data):
+		logger.info('Recieved: %r', message_data)
+		msg = deserialise_message(message_data)
 		
-		action = int(message[0])
-		
-		if action == MESSAGES['HELLO']:
+		if type(msg) is HelloMessage:
 			if self.has_entered_game and not self.is_dead:
-				self.connection.close('Cannot initiate handshake twice!')
+				self.connection.close('Cannot handshake twice!')
 			else:
 				# we can accept this hello.
 				
 				# TODO: implement sanitiser.
-				if message[1] == '':
+				if msg.player_name == '':
 					self.name = 'Leeroy Jenkins'
 				else:
-					self.name = message[1][:16]
+					self.name = msg.player_name[:16]
 				
 				self.kind = ENTITIES['WARRIOR']
-				self.equip_armor(message[2])
-				self.equip_weapon(message[3])
+				self.equip_armor(msg.armor_kind)
+				self.equip_weapon(msg.weapon_kind)
 				self.orientation = random_orientation()
 				self.update_hit_points()
 				self.update_position()
@@ -60,12 +59,11 @@ class Player(Character):
 				self.send(WelcomeMessage(self).serialise())
 				self.has_entered_game = True
 				self.is_dead = False
-			
 		elif self.has_entered_game:
 		
-			logger.warn('Ignoring unknown message type %d during has_entered_game', action)
+			logger.warn('Ignoring unknown message type %d (%s) during has_entered_game', msg.message_type, msg.message_type_label())
 		else:
-			logger.warn('Ignoring message type %d during !has_entered_game', action)
+			logger.warn('Ignoring message type %d (%s) during !has_entered_game', msg.message_type, msg.message_type_label())
 		
 	def destroy(self):
 		for mob in self.attackers.values():

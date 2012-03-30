@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import logging, json
+logger = logging.getLogger(__name__)
 
 MESSAGES = dict(
 	HELLO = 0,
@@ -30,9 +32,59 @@ MESSAGES = dict(
 	CHECK = 26
 )
 
+MESSAGE_HANDLERS = {}
+
+def message_handler(cls):
+	"Decorator to register various message handling functionality."
+	assert hasattr(cls, 'deserialise'), "%r does not implement required deserialise method" % cls
+	assert hasattr(cls, 'message_type'), "%r does not implement required message_type attribute" % cls
+	
+	MESSAGE_HANDLERS[cls.message_type] = cls
+	return cls
+	
+def deserialise_message(msg):
+	msg[0] = int(msg[0])
+	if MESSAGE_HANDLERS.has_key(msg[0]):
+		return MESSAGE_HANDLERS[msg[0]].deserialise(msg)
+	else:
+		logging.warn("Undecodable message type %r recieved.", msg[0])
+		m = Message()
+		m.message_type = msg[0]
+		return m
+
 class Message(object):
+	message_type = None
 	def serialise(self):
 		return [self.message_type]
+	
+	def message_type_label(self):
+		"Used for debugging server implementation by printing the event packet by name."
+		try:
+			return [k for k, v in MESSAGES.iteritems() if v == self.message_type][0]
+		except:
+			return None
+
+@message_handler
+class HelloMessage(Message):
+	message_type = MESSAGES['HELLO']
+	
+	def __init__(self, player_name, armor_kind, weapon_kind):
+		self.player_name = player_name
+		self.armor_kind = armor_kind
+		self.weapon_kind = weapon_kind
+	
+	def serialise(self):
+		"Not used by the server, but implemented anyway for testing."
+		return super(HelloMessage, self).serialise() + [
+			self.player_name,
+			self.armor_kind,
+			self.weapon_kind
+		]
+
+	@classmethod
+	def deserialise(cls, msg):
+		return cls(msg[1], msg[2], msg[3])
+
 
 class SpawnMessage(Message):
 	message_type = MESSAGES['SPAWN']
@@ -42,6 +94,7 @@ class SpawnMessage(Message):
 	
 	def serialise(self):
 		return super(SpawnMessage, self).serialise() + self.entity.get_state()
+	
 	
 class DespawnMessage(Message):
 	message_type = MESSAGES['DESPAWN']
@@ -119,4 +172,7 @@ class WelcomeMessage(Message):
 			self.player.y,
 			self.player.hit_points
 		]
-	
+
+class ChatMessage(Message):
+	""
+	pass

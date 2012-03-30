@@ -45,7 +45,7 @@ The game server is still in development.  Currently using:
 
 - mod_pywebsocket
 
-It can be installed via `pip install [module_name]`.
+It can be installed via `pip install [module_name]`.  Python 2.6 or later is required.  Python 3 is not supported at this time.
 
 The goal is to be 100% compatible with the original JavaScript version of the server, including worlds and configuration files.
 
