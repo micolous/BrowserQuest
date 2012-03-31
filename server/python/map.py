@@ -44,7 +44,7 @@ class Map(object):
 		
 		return x, y
 	
-	def grid_position_to_tile_index(self, x, y)
+	def grid_position_to_tile_index(self, x, y):
 		return (y * self.width) + x + 1
 	
 	def generate_collision_grid(self):
@@ -67,12 +67,12 @@ class Map(object):
 			
 		return self.grid[y][x]
 	
-	def group_id_to_position(self, group_id):
+	def group_id_to_group_position(self, group_id):
 		return [int(x) for x in group_id.split('-', 2)]
 	
 	def get_group_id_from_position(self, x, y):
 		return '%d-%d' % (
-			floor((x - 1) / floor(self.zone_width))
+			floor((x - 1) / floor(self.zone_width)),
 			floor((y - 1) / floor(self.zone_width))
 		)
 	
@@ -104,7 +104,7 @@ class Map(object):
 			connected_position = self.group_id_to_group_position(connected_group_id)
 			
 			if group_id not in self.connected_groups:
-				self.connected_groups[group_id] = {}
+				self.connected_groups[group_id] = []
 				
 			self.connected_groups[group_id].append(connected_position)
 				

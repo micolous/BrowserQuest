@@ -28,6 +28,9 @@ class Player(Character):
 		
 		self.is_dead = False
 		self.has_entered_game = False
+		self.haters = {}
+		self.last_checkpoint = None
+		self.on_request_position = None
 		
 		
 	def handle_message(self, message_data):
@@ -108,8 +111,11 @@ class Player(Character):
 		self.reset_hit_points(formulae.hp(self.armor_level))
 	
 	def update_position(self):
-		# TODO: implement requestpos_callback
-		pass
+		# the World registers a callback to set the starting position of the player.
+		logger.info('Player.update_position called, on_request_position = %s', self.on_request_position)
+		if callable(self.on_request_position):
+			pos = self.on_request_position()
+			self.set_position(*pos)
 	
 	def on_move(self, x, y):
 		# moved from worldserver.js

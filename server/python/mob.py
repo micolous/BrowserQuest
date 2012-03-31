@@ -89,7 +89,7 @@ class Mob(Character):
 		
 		# TODO: implement return timeout
 	
-	def move(self, x, y)
+	def move(self, x, y):
 		self.set_position(x, y)
 		
 		# TODO: implement move callback

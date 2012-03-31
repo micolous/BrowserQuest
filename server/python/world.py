@@ -3,7 +3,7 @@ from character import Character
 from player import Player
 from mob import Mob
 from message import *
-
+from map import Map
 from math import floor
 import logging
 logger = logging.getLogger(__name__)
@@ -16,6 +16,8 @@ class World(object):
 		
 		# updates per second.
 		self.ups = 50
+		self.regenCount = self.ups * 2
+		self.update_count = 0
 		
 		self.map = None
 		
@@ -50,7 +52,7 @@ class World(object):
 		logger.info("%s has joined world %d", player.name, self.world_id)
 		player.world = self
 		
-		if !player.has_entered_game:
+		if not player.has_entered_game:
 			self.player_count += 1
 		
 		# send the population and relevant entities in this world
@@ -79,10 +81,30 @@ class World(object):
 	def run(self, map_file_path):
 		self.map = Map(map_file_path)
 		
-	
 	def characters(self):
 		"Returns a list of players and characters"
 		for x in self.characters.values():
 			yield x
 		for x in self.mobs.values():
 			yield x
+			
+	def set_updates_per_seconds(self, ups):
+		self.ups = ups
+	
+	def push_relevant_entity_list_to(self, player):
+		entities = []
+		
+		# TODO: implement
+	
+	def push_spawns_to_player(self, player, ids):
+		"Push entity spawns to the client"
+		# TODO: implement
+	
+	def add_player(self, player):
+		self.add_entity(player)
+		self.players[player.entity_id] = player
+		
+		
+	def add_entity(self, entity):
+		self.entities[entity.entity_id] = entity
+	
