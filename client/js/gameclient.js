@@ -473,6 +473,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
 
         sendMove: function(x, y) {
             this.sendMessage([Types.Messages.MOVE,
+			                  0,
                               x,
                               y]);
         },

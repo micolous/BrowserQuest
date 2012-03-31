@@ -87,9 +87,11 @@ module.exports = Player = Character.extend({
                 }
             }
             else if(action === Types.Messages.MOVE) {
+				// protocol modification: C->S message now has an unused entity_id field
+				// such that the C->S message is the same as the S->C.
                 if(self.move_callback) {
-                    var x = message[1],
-                        y = message[2];
+                    var x = message[2],
+                        y = message[3];
                     
                     if(self.server.isValidPosition(x, y)) {
                         self.setPosition(x, y);

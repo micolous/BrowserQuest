@@ -120,10 +120,26 @@ Removes an Entity from the game.
 
 * `1` The entity ID. (int)
 
+### MOVE (4) (Server, Client) ###
+
+From the client, this moves the player to the location given.
+
+From the server, this moves any entity to the location given.
+
+This has been changed in my branch of the code.   The original version sent Client -> Server messages with the following format:
+
+* `1` X-position of the player. (int)
+* `2` Y-position of the player. (int)
+
+My version changes the Client -> Server packet so that it is the same as the Server -> Client packet:
+
+* `1` The entity ID that is moving.  The server should ignore this value sent by the client. (int)
+* `2` X-position of the entity / player. (int)
+* `3` Y-position of the entity / player. (int)
 
 ### CHAT (11) (Server, Client) ###
 
-This has been changed in my branch of the code.  The original version sent Client -> Server messages with the following key:
+This has been changed in my branch of the code.  The original version sent Client -> Server messages with the following format:
 
 * `1` The message that the client wishes to send. (int)
 

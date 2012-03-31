@@ -197,3 +197,36 @@ class ChatMessage(Message):
 
 class DestroyMessage(DespawnMessage):
 	message_type = MESSAGES['DESTROY']
+
+@message_handler
+class MoveMessage(Message):
+	"""
+	Represents an entity's movement in the world.
+	
+	This has been modified from the original protocol.
+	
+	Client->Server message is now the same as the Server->Client message.
+	"""
+	message_type = MESSAGES['MOVE']
+	
+	def __init__(self, entity=None, x=0, y=0, entity_id=0):
+		if entity:
+			self.entity_id = entity.entity_id
+		else:
+			self.entity_id = entity_id
+		
+		self.x, self.y = x, y
+
+	def serialise(self):
+		return super(ChatMessage, self).serialise() + [
+			self.entity_id,
+			self.x, 
+			self.y
+		]
+	
+	@classmethod
+	def deserialise(cls, msg):
+		return cls(entity_id=msg[1], x=msg[2], y=msg[3])
+
+		
+
