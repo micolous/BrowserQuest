@@ -121,7 +121,7 @@ class Player(Character):
 			if target:
 				pos = self.world.find_position_next_to(attacker, target)
 				
-				if attacker.distance_to_spawning_point(*pos) > 50):
+				if attacker.distance_to_spawning_point(*pos) > 50:
 					attacker.clear_target()
 					attacker.forget_everyone()
 					self.remove_attacker(attacker)
