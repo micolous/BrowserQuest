@@ -2,10 +2,11 @@
 define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory, BISON) {
 
     var GameClient = Class.extend({
-        init: function(host, port) {
+        init: function(host, port, game_handler) {
             this.connection = null;
             this.host = host;
             this.port = port;
+			this.game_handler = game_handler;
     
             this.connected_callback = null;
             this.spawn_callback = null;
@@ -45,7 +46,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
         },
         
         connect: function(dispatcherMode) {
-            var url = "ws://"+ this.host +":"+ this.port +"/",
+            var url = "ws://"+ this.host +":"+ this.port +"/" + this.game_handler,
                 self = this;
             
             log.info("Trying to connect to server : "+url);
@@ -61,7 +62,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                     var reply = JSON.parse(e.data);
 
                     if(reply.status === 'OK') {
-                        self.dispatched_callback(reply.host, reply.port);
+                        self.dispatched_callback(reply.host, reply.port, reply.game_handler);
                     } else if(reply.status === 'FULL') {
                         alert("BrowserQuest is currently at maximum player population. Please retry later.");
                     } else {
@@ -70,7 +71,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                 };
             } else {
                 this.connection.onopen = function(e) {
-                    log.info("Connected to server "+self.host+":"+self.port);
+                    log.info("Connected to server "+self.host+":"+self.port+"/"+self.game_handler);
                 };
 
                 this.connection.onmessage = function(e) {

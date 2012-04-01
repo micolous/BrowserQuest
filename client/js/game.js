@@ -609,9 +609,10 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             }
         },
     
-        setServerOptions: function(host, port, username) {
+        setServerOptions: function(host, port, username, game_handler) {
             this.host = host;
             this.port = port;
+			this.game_handler = game_handler;
             this.username = username;
         },
     
@@ -714,7 +715,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             var self = this,
                 connecting = false; // always in dispatcher mode in the build version
     
-            this.client = new GameClient(this.host, this.port);
+            this.client = new GameClient(this.host, this.port, this.game_handler);
             
             //>>excludeStart("prodHost", pragmas.prodHost);
             var config = this.app.config.local || this.app.config.dev;
@@ -730,11 +731,12 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             }
             //>>includeEnd("prodHost");
             
-            this.client.onDispatched(function(host, port) {
-                log.debug("Dispatched to game server "+host+ ":"+port);
+            this.client.onDispatched(function(host, port, game_handler) {
+                log.debug("Dispatched to game server "+host+ ":"+port+"/"+game_handler);
                 
                 self.client.host = host;
                 self.client.port = port;
+				self.client.game_handler = game_handler;
                 self.client.connect(); // connect to actual game server
             });
             

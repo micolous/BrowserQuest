@@ -7,3 +7,4 @@ client/audio
 .DS_Store
 *.pyc
 *.pyo
+/client/shared
