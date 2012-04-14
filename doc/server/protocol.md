@@ -2,7 +2,9 @@
 
 Game message types are contained in `shared/js/gametypes.js`.  This contains a large JSON-like object.
 
-More message types are definied in `server/js/message.js`.  This defines the format of the various parameters to messages.
+More message types are definied in `server/js/message.js`, with additional protocol decoding by `server/js/player.js`.  This defines the format of the various parameters to messages.  In the client the messages are encoded and decoded by `client/js/gameclient.js`.
+
+Contrary to Mozilla's announcement of the project, there is very little client and server code shared.  The only shared code is in `shared/js/gametypes.js`, which is a bunch of defines for message types.  None of the message serialisation and deserialisation code is shared.  Several messages are different on client and server side.
 
 Messages are passed as objects into BiSON format (or JSON, if the server and client are in JSON-mode).  [BiSON.js can be found here](https://github.com/BonsaiDen/BiSON.js), not to be confused with the much older and widely used language parser [GNU Bison](http://www.gnu.org/software/bison/).
 
