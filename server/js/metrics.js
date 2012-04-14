@@ -1,15 +1,15 @@
 
 var cls = require("./lib/class"),
-    _ = require("underscore"),
-    memcache = require("memcache");
+    _ = require("underscore");
 
 module.exports = Metrics = Class.extend({
     init: function(config) {
         var self = this;
         
         this.config = config;
-        this.client = new memcache.Client(config.memcached_port, config.memcached_host),
+        this.client = new (require("memcache")).Client(config.memcached_port, config.memcached_host);
         this.client.connect();
+        
         this.isReady = false;
         
         this.client.on('connect', function() {
