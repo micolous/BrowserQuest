@@ -5,6 +5,7 @@ config_build.json
 config_local*
 client/audio/music
 .DS_Store
-*.swp*.pyc
+*.swp
+*.pyc
 *.pyo
 /client/shared
