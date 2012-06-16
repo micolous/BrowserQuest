@@ -69,6 +69,12 @@ class Player(Character):
 				
 				# TODO: broadcast this to nearby clients.
 				logger.info('<%s> %s', self.name, msg.message)
+			elif type(msg) is MoveMessage:
+				# TODO: broadcast this.
+				logger.info('%s moved to %r, %r', self.name, msg.x, msg.y)
+			elif type(msg) is CheckMessage:
+				# TODO: handle this properly
+				logger.info('%s checkpoint is %r', self.name, msg.checkpoint_id)
 			else:
 				logger.warn('Ignoring unknown message type %d (%s) during has_entered_game', msg.message_type, msg.message_type_label())
 		else:

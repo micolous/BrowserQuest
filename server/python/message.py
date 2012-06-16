@@ -105,18 +105,6 @@ class DespawnMessage(Message):
 	def serialise(self):
 		return super(DespawnMessage, self).serialise() + [self.entity_id]
 
-class MoveMessage(Message):
-	message_type = MESSAGES['MOVE']
-	def __init__(self, entity):
-		self.entity = entity
-	
-	def serialise(self):
-		return super(MoveMessage, self).serialise() + [
-			self.entity.id,
-			self.entity.x,
-			self.entity.y
-		]
-
 class PopulationMessage(Message):
 	message_type = MESSAGES['POPULATION']
 	
@@ -228,5 +216,23 @@ class MoveMessage(Message):
 	def deserialise(cls, msg):
 		return cls(entity_id=msg[1], x=msg[2], y=msg[3])
 
-		
+@message_handler
+class CheckMessage(Message):
+	"""
+	Notifies the server of the client's current checkpoint.
+	
+	"""
+	message_type = MESSAGES['CHECK']
+	
+	def __init__(self, checkpoint_id=0):
+		self.checkpoint_id = checkpoint_id
+	
+	def serialise(self):
+		return super(CheckMessage, self).serialise() + [
+			self.checkpoint_id
+		]
+	
+	@classmethod
+	def deserialise(cls, msg):
+		return cls(checkpoint_id=msg[1])
 

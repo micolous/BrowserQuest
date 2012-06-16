@@ -149,3 +149,10 @@ My version changes the Client -> Server packet so that it is the same as the Ser
 
 * `1` The entity ID that wishes to talk.  The server should ignore this value sent by the client. (int)
 * `2` The message that the entity wishes to send / has sent.
+
+
+### CHECK (26) (Client) ###
+
+This message is sent by the client to update the Player.lastCheckpoint attribute.  There are various checkpoint IDs in the map, this is probably used for respawning the player if they die?
+
+* `1` The checkpoint ID where the player was at.
