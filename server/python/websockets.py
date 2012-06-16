@@ -39,7 +39,7 @@ class Server(object):
 		This is called when a WebSockets connection is created on the server.
 		"""
 		#logger.info('running inside of server %s', self)
-		player = Player(request.ws_stream, self.world)
+		player = Player(request.ws_stream, self)
 		self.world.on_player_connect(player)
 		
 		# tell the client it's okay to start sending us stuff

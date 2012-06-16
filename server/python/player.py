@@ -20,7 +20,7 @@ class Player(Character):
 	def __init__(self, connection, server):
 		self.connection = connection
 		self.server = server
-		self.world = None
+		self.world = server.world
 		
 		# TODO: fix this to use proper ID assignment.
 		connection_id = randint(0, 65535)
@@ -74,7 +74,15 @@ class Player(Character):
 				logger.info('%s moved to %r, %r', self.name, msg.x, msg.y)
 			elif type(msg) is CheckMessage:
 				# TODO: handle this properly
-				logger.info('%s checkpoint is %r', self.name, msg.checkpoint_id)
+				
+				# lookup checkpoint on the map.
+				if msg.checkpoint_id in self.world.map.checkpoints:
+					self.last_checkpoint = self.world.map.checkpoints[msg.checkpoint_id]
+					logger.info('%s checkpoint is %r', self.name, self.last_checkpoint)
+				else:
+					logger.warn('Ignoring bad checkpoint ID %r from %s', msg.checkpoint_id, self.name)
+
+					
 			else:
 				logger.warn('Ignoring unknown message type %d (%s) during has_entered_game', msg.message_type, msg.message_type_label())
 		else:
