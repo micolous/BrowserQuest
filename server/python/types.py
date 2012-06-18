@@ -1,5 +1,18 @@
 #!/usr/bin/env python
+"""
+Datatypes defined for client-server communications.
 
+Welcome to the only file that is actually shared between the client and the 
+server, and the NodeJS hipster's way of saying "you should totally write your
+server side code in JavaScript because you can share code!!11one".
+
+Yup, it's a fucking joke, and a lie.  There is almost no code shared in this,
+despite Mozilla's PR, and plenty of opportunity for code reuse.
+
+In the end you're stuck with the trainwreck that is NodeJS, and it's totally
+not worth it at all.
+
+"""
 ORIENTATIONS = dict(
 	UP = 1,
 	DOWN = 2,

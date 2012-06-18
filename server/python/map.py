@@ -2,6 +2,7 @@
 from math import floor
 from random import choice
 from checkpoint import Checkpoint
+from mobarea import MobArea
 import logging, json
 logger = logging.getLogger(__name__)
 
@@ -29,6 +30,7 @@ class Map(object):
 		self.zone_width, self.zone_height = 28, 12
 		self.init_connected_groups(map['doors'])
 		self.init_checkpoints(map['checkpoints'])
+		self.generate_collision_grid()
 	
 	def tile_index_to_grid_position(self, tile_number):
 		if tile_number == 0:
@@ -123,3 +125,7 @@ class Map(object):
 		area = choice(self.starting_areas)
 		
 		return area.get_random_position()
+		
+	def init_mob_roaming_areas(self):
+		for a in self.mob_areas:
+			area = MobArea

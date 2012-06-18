@@ -19,6 +19,7 @@ class Mob(Character):
 		self.return_timeout = None
 		self.is_dead = False
 		self.area = None
+		self.on_move = None
 		
 	def destroy(self):
 		self.is_dead = True
@@ -65,7 +66,7 @@ class Mob(Character):
 	
 	def forget_everyone(self):
 		self.hate_list = {}
-		self.return_to_spawning_position
+		self.return_to_spawning_position(1)
 	
 	def drop(self, item):
 		return DropMessage(self, item)
@@ -93,6 +94,8 @@ class Mob(Character):
 		self.set_position(x, y)
 		
 		# TODO: implement move callback
+		if callable(self.on_move):
+			self.on_move(self)
 	
 	def update_hit_points(self):
 		self.reset_hit_points(get_hit_points(self.kind))

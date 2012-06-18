@@ -5,10 +5,18 @@ from mob import Mob
 from message import *
 from map import Map
 from math import floor
+from npc import Npc
+from chest import Chest
+from item import Item
 import logging
 logger = logging.getLogger(__name__)
 
 class World(object):
+	"""
+	Defines a shard of the world.
+	
+	This is equivalent to js/worldserver.js:World
+	"""
 	def __init__(self, world_id, max_players, server):
 		self.world_id = world_id
 		self.max_players = max_players
@@ -79,7 +87,14 @@ class World(object):
 				self.push_to_player(character, character.regen())
 			
 	def run(self, map_file_path):
+		# this function call is sync in python
+		# don't need to wait for callbacks.
 		self.map = Map(map_file_path)
+		
+		# generate_collision_grid called from Map.init_map
+		
+		# populate mob roaming areas
+		
 		
 	def characters(self):
 		"Returns a list of players and characters"
@@ -104,7 +119,52 @@ class World(object):
 		self.add_entity(player)
 		self.players[player.entity_id] = player
 		
-		
 	def add_entity(self, entity):
 		self.entities[entity.entity_id] = entity
+	
+	def add_mob(self, mob):
+		self.add_entity(mob)
+		self.mobs[mob.entity_id] = mob
+	
+	def add_npc(self, kind, x, y):
+		npc = Npc('8-%s-%s-%s' % (kind, x, y), kind, x, y)
+		self.add_entity(npc)
+		self.npcs[npc.entity_id] = npc
+		
+		return npc
+	
+	def add_item(self, item):
+		self.add_entity(item)
+		self.items[item.entity_id] = item
+		
+		return item
+	
+	def create_item(self, kind, x, y):
+		eid = '9-%s' % self.item_count
+		self.item_count += 1
+		
+		if kind == ENTITIES['CHEST']:
+			item = Chest(eid, x, y)
+		else:
+			item = Item(eid, kind, x, y)
+		
+		return item
+	
+	def create_chest(self, x, y, items):
+		chest = self.create_item(ENTITIES['CHEST'], x, y)
+		chest.set_items(items)
+		
+		return chest
+	
+	def add_static_item(self, item):
+		item.is_static = True
+		# TODO: on_respawn handler
+		
+		self.add_item(item)
+	
+	def add_item_from_chest(kind, x, y):
+		item = self.create_item(kind, x, y)
+		item.is_from_chest = True
+		
+		return self.add_item(item)
 	

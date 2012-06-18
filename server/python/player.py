@@ -72,6 +72,7 @@ class Player(Character):
 			elif type(msg) is MoveMessage:
 				# TODO: broadcast this.
 				logger.info('%s moved to %r, %r', self.name, msg.x, msg.y)
+				
 			elif type(msg) is CheckMessage:
 				# TODO: handle this properly
 				
