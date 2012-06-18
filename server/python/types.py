@@ -94,3 +94,32 @@ def get_orientation_as_string(orientation):
 		return 'right'
 	else:
 		raise ValueError, "Orientation numeric is invalid."
+
+def is_player(kind):
+	return ENTITIES['WARRIOR'] == kind
+
+def is_mob(kind):
+	return ENTITIES['RAT'] <= kind <= ENTITIES['DEATHKNIGHT']
+
+def is_npc(kind):
+	return ENTITIES['GUARD'] <= kind <= ENTITIES['CODER']
+
+def is_character(kind):
+	return is_mob(kind) or is_npc(kind) or is_player(kind)
+
+def is_armor(kind):
+	return ENTITIES['FIREFOX'] <= kind <= ENTITIES['GOLDENARMOR']
+
+def is_weapon(kind):
+	return ENTITIES['SWORD1'] <= kind <= ENTITIES['BLUESWORD']
+
+def is_item(kind):
+	return is_weapon(kind) or is_armor(kind) or (is_object(kind) and not is_chest(kind))
+
+def is_object(kind):
+	return ENTITIES['FLASK'] <= kind <= ENTITIES['CAKE']
+
+def is_chest(kind):
+	return ENTITIES['CHEST'] == kind
+
+	

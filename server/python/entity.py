@@ -8,14 +8,13 @@ class Entity(object):
 	A basic Entity object in the game.
 	"""
 	def __init__(self, entity_id, entity_type, kind, x, y):
-		assert entity_type in ENTITIES, 'Unknown entity type %r' % entity_type
-	
 		# change in python port: id and type are reserved keywords
 		self.entity_id = entity_id
 		self.entity_type = entity_type
 		self.kind = kind
 		self.x = x
 		self.y = y
+		self.group = None
 	
 	def get_state(self):
 		"""

@@ -481,6 +481,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
     
         sendLootMove: function(item, x, y) {
             this.sendMessage([Types.Messages.LOOTMOVE,
+			                  0,
                               x,
                               y,
                               item.id]);

@@ -13,11 +13,11 @@ class Area(object):
 		self.has_completely_respawned = True
 		self.empty_callback = None
 	
-	def get_random_position_inside_area():
+	def get_random_position_inside_area(self):
 		x, y = self.x, self.y
 		valid = False
 		
-		while !valid:
+		while not valid:
 			x = self.x + randint(0, self.width + 1)
 			y = self.y + randint(0, self.height + 1)
 			valid = self.world.is_valid_position(x, y)
@@ -53,7 +53,7 @@ class Area(object):
 		return True
 	
 	def is_full(self):
-		return !self.is_empty() and self.number_of_entities >= len(self.entities)
+		return not self.is_empty() and self.number_of_entities >= len(self.entities)
 	
 	def on_empty(self, callback):
 		self.empty_callback = callback

@@ -103,6 +103,8 @@ module.exports = Player = Character.extend({
                 }
             }
             else if(action === Types.Messages.LOOTMOVE) {
+				// protocol modification: C->S message now has an unused entity_id field
+				// such that the C->S message is the same as the S->C.			
                 if(self.lootmove_callback) {
                     self.setPosition(message[1], message[2]);
                     

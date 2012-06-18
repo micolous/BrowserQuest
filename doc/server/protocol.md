@@ -139,6 +139,26 @@ My version changes the Client -> Server packet so that it is the same as the Ser
 * `2` X-position of the entity / player. (int)
 * `3` Y-position of the entity / player. (int)
 
+### LOOTMOVE (5) (Server, Client) ###
+
+From the client, this moves the player to the location given.
+
+From the server, this moves any entity to the location given.
+
+This has been changed in my branch of the code.   The original version sent Client -> Server messages with the following format:
+
+* `1` X-position of the player. (int)
+* `2` Y-position of the player. (int)
+* `3` Entity ID to loot. (int)
+
+My version changes the Client -> Server packet so that it is the same as the Server -> Client packet:
+
+* `1` The entity ID that is moving.  The server should ignore this value sent by the client. (int)
+* `2` X-position of the entity / player. (int)
+* `3` Y-position of the entity / player. (int)
+* `4` Entity ID to loot. (int)
+
+
 ### CHAT (11) (Server, Client) ###
 
 This has been changed in my branch of the code.  The original version sent Client -> Server messages with the following format:

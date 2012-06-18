@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+from entity import Entity
 
-class Item(object):
+
+class Item(Entity):
 	def __init__(self, entity_id, kind, x, y):
 		super(Item, self).__init__(entity_id, 'item', kind, x, y)
 		self.is_static = False
@@ -17,7 +19,7 @@ class Item(object):
 		if self.is_static:
 			self.schedule_respawn(30)
 		
-	def schedule_respawn(self, delay)
+	def schedule_respawn(self, delay):
 		# TODO: schedule this for the future, rather than processing
 		# immediately.
 		if callable(self.on_respawn):

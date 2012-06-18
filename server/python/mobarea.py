@@ -9,7 +9,7 @@ class MobArea(Area):
 		
 		self.nb = nb
 		self.kind = kind
-		assert kind in ENTITIES, 'Unknown entity type %r' % kind
+		assert kind.upper() in ENTITIES, 'Unknown entity type %r' % kind
 		
 		self.respawns = []
 		self.set_number_of_entities(nb)
@@ -20,8 +20,8 @@ class MobArea(Area):
 	
 	def create_mob_inside_area(self):
 		x, y = self.get_random_position_inside_area()
-		k = ENTITIES[self.kind]
-		mob = Mob('1%s-%s-%s' % (self.area_id, k, len(self.entities)), k, x, y)
+		k = ENTITIES[self.kind.upper()]
+		mob = Mob('1%s%s%s' % (self.area_id, k, len(self.entities)), k, x, y)
 		
 		#mob.on_move = self.world.on_mob_move_callbacks.append(mob)
-		
+		return mob

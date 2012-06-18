@@ -3,6 +3,9 @@ from math import floor
 from random import choice
 from checkpoint import Checkpoint
 from mobarea import MobArea
+from chestarea import ChestArea
+from mob import Mob
+from types import *
 import logging, json
 logger = logging.getLogger(__name__)
 
@@ -56,7 +59,7 @@ class Map(object):
 			tile_index = 0
 			for i in range(self.height):
 				self.grid[i] = {}
-				for k in range(self.width):
+				for j in range(self.width):
 					self.grid[i][j] = tile_index in self.collisions
 					tile_index += 1
 	
@@ -78,6 +81,11 @@ class Map(object):
 			floor((y - 1) / floor(self.zone_width))
 		)
 	
+	def groups(self):
+		for x in range(self.group_width):
+			for y in range(self.group_height):
+				yield '%d-%d' % (x, y)
+	
 	def get_adjacent_group_positions(self, group_id):
 		pos = self.group_id_to_group_position(group_id)
 		groups = set()
@@ -85,7 +93,7 @@ class Map(object):
 		# surrounding groups
 		for x in range(3):
 			for y in range(3):
-				groups.add([pos[0] + (x - 1), pos[1] + (y - 1)])
+				groups.add(get_group_id_from_position(pos[0] + (x - 1), pos[1] + (y - 1)))
 		
 		# groups connected via doors
 		for pos in self.connected_groups[group_id]:
@@ -126,6 +134,54 @@ class Map(object):
 		
 		return area.get_random_position()
 		
-	def init_mob_roaming_areas(self):
+	def populate_world(self, world):
+		# from worldserver.js:World.run.map.ready
+		# populate all mob "roaming" areas
 		for a in self.mob_areas:
-			area = MobArea
+			area = MobArea(a['id'], a['nb'], a['type'], a['x'], a['y'], a['width'], a['height'], world)
+			world.mob_areas.append(area)
+			area.spawn_mobs()
+			
+			# TODO: empty handler
+		
+		# create all chest areas
+		for i, a in enumerate(self.chest_areas):
+			# BUG: map contains no thing called "id".  possibly undefined
+			area = ChestArea(i, a['x'], a['y'], a['w'], a['h'], a['tx'], a['ty'], a['i'], world)
+			world.chest_areas.append(area)
+			
+			# TODO: empty handler
+		
+		# spawn static chests
+		for chest in self.static_chests:
+			c = world.create_chest(chest['x'], chest['y'], chest['i'])
+			world.add_static_item(c)
+		
+		# spawn static entities
+		self.spawn_static_entities(world)
+		
+		# set max number of entities contained in each chest area
+		for area in world.chest_areas:
+			area.set_number_of_entities(len(area.entities))
+	
+	def spawn_static_entities(self, world):
+		# from worldserver.js:World.spawnStaticEntities
+		count = 0
+		for tid, k in self.static_entities.iteritems():
+			kind = ENTITIES[k.upper()]
+			x, y = self.tile_index_to_grid_position(int(tid))
+			
+			if is_npc(kind):
+				world.add_npc(kind, x + 1, y)
+			elif is_mob(kind):
+				mob = Mob('7%s%s' % (kind, count), kind, x + 1, y)
+				count += 1
+				
+				# TODO: respawn code
+				
+				world.add_mob(mob)
+				world.try_adding_mob_to_chest_area(mob)
+			elif is_item(kind):
+				world.add_static_item(world.create_item(kind, x + 1, y))
+				
+

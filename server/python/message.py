@@ -187,6 +187,42 @@ class DestroyMessage(DespawnMessage):
 	message_type = MESSAGES['DESTROY']
 
 @message_handler
+class LootMoveMessage(Message):
+	"""
+	Represents an entity's movement in the world to attempt to loot an entity
+	
+	This has been modified from the original protocol.
+	
+	Client->Server message is now the same as the Server->Client message.
+	"""
+	message_type = MESSAGES['LOOTMOVE']
+	
+	def __init__(self, entity=None, x=0, y=0, entity_id=0, target_id=0, target=None):
+		if entity:
+			self.entity_id = entity.entity_id
+		else:
+			self.entity_id = entity_id
+			
+		if target:
+			self.target_id = target.entity_id
+		else:
+			self.target_id = target_id
+		
+		self.x, self.y = x, y
+
+	def serialise(self):
+		return super(ChatMessage, self).serialise() + [
+			self.entity_id,
+			self.x, 
+			self.y,
+			self.target_id
+		]
+	
+	@classmethod
+	def deserialise(cls, msg):
+		return cls(entity_id=msg[1], x=msg[2], y=msg[3], target_id=msg[4])
+
+@message_handler
 class MoveMessage(Message):
 	"""
 	Represents an entity's movement in the world.

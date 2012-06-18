@@ -69,10 +69,23 @@ class Player(Character):
 				
 				# TODO: broadcast this to nearby clients.
 				logger.info('<%s> %s', self.name, msg.message)
-			elif type(msg) is MoveMessage:
-				# TODO: broadcast this.
-				logger.info('%s moved to %r, %r', self.name, msg.x, msg.y)
-				
+			elif type(msg) in (MoveMessage, LootMoveMessage):
+				if self.world.is_valid_position(msg.x, msg.y):
+					logger.info('%s moved to %r, %r', self.name, msg.x, msg.y)
+					self.set_position(msg.x, msg.y)
+					
+					if type(msg) is MoveMessage:
+						self.clear_target()
+						
+						self.broadcast(MoveMessage(self))
+						self.on_move(msg.x, msg.y)
+					elif type(msg) is LootMoveMessage and message.target_id in self.world.entities:
+						item = self.world.entities[message.target_id]
+					
+						self.broadcast(LootMoveMessage(self))
+						self.on_loot_move(msg.x, msg.y)
+				else:
+					logger.warn('%s tried to move to invalid position %r, %r', self.name, msg.x, msg.y)
 			elif type(msg) is CheckMessage:
 				# TODO: handle this properly
 				
@@ -158,7 +171,7 @@ class Player(Character):
 			self.world.push_to_previous_groups(self, DestroyMessage(self))
 			self.world.push_relevant_entities(self)
 			
-	def on_broadcast(self, message, ignore_self):
+	def broadcast(self, message, ignore_self=False):
 		if ignore_self:
 			entity_id = None
 		else:

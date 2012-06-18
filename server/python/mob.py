@@ -11,8 +11,8 @@ class Mob(Character):
 		self.update_hit_points()
 		
 		self.spawn_x, self.spawn_y = x, y
-		self.armor_level = get_armor_level(this.kind)
-		self.weapon_level = get_weapon_level(this.kind)
+		self.armor_level = get_armor_level(self.kind)
+		self.weapon_level = get_weapon_level(self.kind)
 		
 		self.hate_list = {}
 		self.respawn_timeout = None

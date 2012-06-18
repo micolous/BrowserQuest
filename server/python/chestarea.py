@@ -14,8 +14,8 @@ class ChestArea(Area):
 			return (
 				entity.x >= self.x and
 				entity.y >= self.y and
-				entity.x < (this.x + this.width) and
-				entity.y < (this.y + this.height)
+				entity.x < (self.x + self.width) and
+				entity.y < (self.y + self.height)
 			)
 		return False
 	
