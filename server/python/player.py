@@ -31,6 +31,7 @@ class Player(Character):
 		self.haters = {}
 		self.last_checkpoint = None
 		self.on_request_position = None
+		self.recently_left_groups = []
 		
 		
 	def handle_message(self, message_data):
@@ -69,6 +70,8 @@ class Player(Character):
 				
 				# TODO: broadcast this to nearby clients.
 				logger.info('<%s> %s', self.name, msg.message)
+			elif type(msg) is ZoneMessage:
+				self.on_zone()
 			elif type(msg) in (MoveMessage, LootMoveMessage):
 				if self.world.is_valid_position(msg.x, msg.y):
 					logger.info('%s moved to %r, %r', self.name, msg.x, msg.y)
@@ -144,6 +147,7 @@ class Player(Character):
 		if callable(self.on_request_position):
 			pos = self.on_request_position()
 			self.set_position(*pos)
+			self.on_zone()
 	
 	def on_move(self, x, y):
 		# moved from worldserver.js
@@ -195,6 +199,3 @@ class Player(Character):
 		
 		if self.world.removed_callback:
 			self.world.removed_callback()
-		
-		
-	

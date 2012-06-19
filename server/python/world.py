@@ -159,7 +159,7 @@ class World(object):
 		API change from JS: takes a group as the argument, not a group id
 		"""
 		#if group_id in self.groups:
-		group = self.groups[group_id]
+		#group = self.groups[group_id]
 		for player in group.players:
 			if player.entity_id != ignored_player:
 				self.push_to_player(player, message)
@@ -170,8 +170,9 @@ class World(object):
 		"""
 		API change from JS: takes a group as the argument, not a group id
 		"""
-		for g in self.map.get_adjacent_group_positions(group):
-			self.push_to_group(g, message, ignored_player)
+		for g in self.map.get_adjacent_group_positions(group.group_id):
+			if g in self.groups:
+				self.push_to_group(self.groups[g], message, ignored_player)
 	
 	def push_to_previous_groups(self, player, message):
 		# push this message to all groups which are not going to be updated
@@ -196,6 +197,7 @@ class World(object):
 
 	def add_entity(self, entity):
 		self.entities[entity.entity_id] = entity
+		self.handle_entity_group_membership(entity)
 	
 	def remove_entity(self, entity):
 		if entity.entity_id in self.entities:
@@ -295,15 +297,19 @@ class World(object):
 			if area.contains(mob):
 				area.add_to_area(mob)
 
-	def add_to_group(entity, group):
+	def add_to_group(self, entity, group):
 		new_groups = []
 		
-		for group_id in self.map.get_adjacent_group_positions(group):
+		for group_id in self.map.get_adjacent_group_positions(group.group_id):
 			# FIXME: memory leak?
+			if group_id not in self.groups:
+				logger.warn('Invalid group id referenced by add_to_group: %r', group_id)
+				continue
+				
 			self.groups[group_id].entities[entity.entity_id] = entity;
 			new_groups.append(group_id)
 		
-		entity.group = group
+		entity.group = group.group_id
 		
 		return new_groups
 	
@@ -358,8 +364,16 @@ class World(object):
 		is_item = type(entity) is Item
 		is_dropped_item = is_item and not (entity.is_static or entity.is_from_chest)
 		
-		for group_id in self.map.get_adjacent_group_positions(group):
-			group = self.groups[group_id]
-			
-			if entity in group.entities and (not is_item or is_chest or (is_item and not is_dropped_item):
-				group.incoming.append(entity)
+		for group_id in self.map.get_adjacent_group_positions(group.group_id):
+			if group_id in self.groups:
+				group = self.groups[group_id]
+				
+				if entity in group.entities and (not is_item or is_chest or (is_item and not is_dropped_item)):
+					group.incoming.append(entity)
+			else:
+				logger.warn('Invalid group id referenced by add_as_incoming_to_group: %r', group_id)
+	
+	def push_relevant_entities(self, player):
+		# TODO: stub
+		pass
+		

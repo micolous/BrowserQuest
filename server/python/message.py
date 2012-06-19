@@ -272,3 +272,24 @@ class CheckMessage(Message):
 	def deserialise(cls, msg):
 		return cls(checkpoint_id=msg[1])
 
+@message_handler
+class ZoneMessage(Message):
+	"""
+	Notifies the server that the client has moved to another zone.
+	
+	This will tell other clients in the old zone that the client has
+	disappeared, and request a new entity list based on items in the new
+	zone.
+	
+	"""
+	message_type = MESSAGES['ZONE']
+	
+	def __init__(self):
+		pass
+	
+	def serialise(self):
+		return super(ZoneMessage, self).serialise()
+	
+	@classmethod
+	def deserialise(cls, msg):
+		return cls()

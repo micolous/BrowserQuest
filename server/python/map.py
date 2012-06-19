@@ -6,6 +6,7 @@ from mobarea import MobArea
 from chestarea import ChestArea
 from mob import Mob
 from types import *
+from group import Group, ZONE_WIDTH, ZONE_HEIGHT
 import logging, json
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,10 @@ class Map(object):
 		self.static_entities = map['staticEntities']
 		self.is_loaded = True
 		
-		self.zone_width, self.zone_height = 28, 12
+		# this is static information, doesn't need to be in a class.
+		#self.zone_width, self.zone_height = 28, 12
+		self.group_width = self.width // ZONE_WIDTH
+		self.group_height = self.height // ZONE_HEIGHT
 		self.init_connected_groups(map['doors'])
 		self.init_checkpoints(map['checkpoints'])
 		self.generate_collision_grid()
@@ -77,8 +81,8 @@ class Map(object):
 	
 	def get_group_id_from_position(self, x, y):
 		return '%d-%d' % (
-			floor((x - 1) / floor(self.zone_width)),
-			floor((y - 1) / floor(self.zone_width))
+			(x - 1) // ZONE_WIDTH,
+			(y - 1) // ZONE_HEIGHT
 		)
 	
 	def groups(self):
@@ -93,12 +97,13 @@ class Map(object):
 		# surrounding groups
 		for x in range(3):
 			for y in range(3):
-				groups.add(get_group_id_from_position(pos[0] + (x - 1), pos[1] + (y - 1)))
+				groups.add(self.get_group_id_from_position(pos[0] + (x - 1), pos[1] + (y - 1)))
 		
 		# groups connected via doors
-		for pos in self.connected_groups[group_id]:
-			# sets automatically discard duplicates
-			groups.add(pos)
+		if group_id in self.connected_groups:
+			for pos in self.connected_groups[group_id]:
+				# sets automatically discard duplicates
+				[groups.add(p) for p in pos]
 			
 		# remove groups that are outside of the range, and generate a new list.
 		for group in groups:
@@ -133,8 +138,15 @@ class Map(object):
 		area = choice(self.starting_areas)
 		
 		return area.get_random_position()
-		
+	
+	def init_zone_groups(self, world):
+		# from Server.initZoneGroups
+		for group_id in self.groups():
+			world.groups[group_id] = Group(group_id, world)
+	
 	def populate_world(self, world):
+		self.init_zone_groups(world)
+	
 		# from worldserver.js:World.run.map.ready
 		# populate all mob "roaming" areas
 		for a in self.mob_areas:
