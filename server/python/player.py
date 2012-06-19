@@ -181,7 +181,9 @@ class Player(Character):
 		else:
 			entity_id = self.entity_id
 		
-		self.world.push_to_adjacent_groups(self.group, message, entity_id)
+		if self.group in self.world.groups:
+			group = self.world.groups[self.group]
+			self.world.push_to_adjacent_groups(group, message, entity_id)
 	
 	def on_broadcast_to_zone(self, message, ignore_self):
 		if ignore_self:
@@ -189,7 +191,9 @@ class Player(Character):
 		else:
 			entity_id = self.entity_id
 		
-		self.world.push_to_group(self.group, message, entity_id)
+		if self.group in self.world.groups:
+			group = self.world.groups[self.group]
+			self.world.push_to_group(self.group, message, entity_id)
 	
 	def on_exit(self):
 		logger.info('%s has left the game.', self.name)

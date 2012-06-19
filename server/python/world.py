@@ -322,9 +322,9 @@ class World(object):
 			if entity in group.players:
 				group.players.remove(entity)
 			
-			for group_id in self.map.get_adjacent_group_positions(group):
-				if entity.entity_id in self.group[group_id].entities:
-					del self.group[group_id].entities[entities.entity_id]
+			for group_id in self.map.get_adjacent_group_positions(group.group_id):
+				if group_id in self.groups and entity.entity_id in self.groups[group_id].entities:
+					del self.groups[group_id].entities[entity.entity_id]
 					old_groups.append(group_id)
 			
 			entity.group = None
@@ -342,14 +342,14 @@ class World(object):
 				has_changed_groups = True
 				
 				self.add_as_incoming_to_group(entity, group)
-				old_groups = self.remove_from_groups(entity)
-				new_groups = self.add_to_group(entity, group)
+				old_groups = set(self.remove_from_groups(entity))
+				new_groups = set(self.add_to_group(entity, group))
 				
 				if old_groups:
 					old_groups -= new_groups
 					entity.recently_left_groups = old_groups
 					
-					log.info('group diff: %r', entity.recently_left_groups)
+					logger.info('group diff: %r', entity.recently_left_groups)
 					
 		return has_changed_groups
 	
